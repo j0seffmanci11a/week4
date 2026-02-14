@@ -1,0 +1,1 @@
+What my server does is read and saves Dev Notes and allows the user to pull up thoes files. It's very basic, as this is/was my first time every creating a server either with or without AI help, but I have it in a way that I want it to be basic to use.

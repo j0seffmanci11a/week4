@@ -1,0 +1,102 @@
+{
+  "title": "Dev Notes MCP Server Implementation",
+  "description": "A guided tour through the MCP (Model Context Protocol) server implementation for managing development notes with Claude Code",
+  "steps": [
+    {
+      "file": "package.json",
+      "line": 1,
+      "title": "Project Setup",
+      "description": "This is the package.json configuration for the dev-notes-server. It includes:\n- The @modelcontextprotocol/sdk dependency needed to build MCP servers\n- A 'start' script to run the server\n- The 'commonjs' module type for Node.js compatibility"
+    },
+    {
+      "file": "index.js",
+      "line": 1,
+      "title": "Server Entry Point",
+      "description": "The shebang (#!/usr/bin/env node) allows this file to be executed directly as a Node.js script. This is the main entry point for our MCP server."
+    },
+    {
+      "file": "index.js",
+      "line": 12,
+      "title": "Module Imports",
+      "description": "We import the required components from the MCP SDK:\n- Server: The main server class that manages connections\n- StdioServerTransport: Handles communication via standard input/output\n- CallToolRequestSchema & ListToolsRequestSchema: Define the request types we'll handle\n- TextContent: The response type for tool outputs"
+    },
+    {
+      "file": "index.js",
+      "line": 27,
+      "title": "Notes Directory Configuration",
+      "description": "We define NOTES_DIR using path.join(os.homedir(), '~/DIG4503C/week4/dev-notes'). This is where all saved notes will be stored on the user's system."
+    },
+    {
+      "file": "index.js",
+      "line": 33,
+      "title": "Slugify Helper Function",
+      "description": "The slugify() function converts note titles into valid filenames:\n- Converts to lowercase\n- Removes special characters\n- Replaces spaces with hyphens\nExample: 'Project Ideas' → 'project-ideas.md'"
+    },
+    {
+      "file": "index.js",
+      "line": 45,
+      "title": "Directory Initialization",
+      "description": "The ensureNotesDir() function automatically creates the notes directory if it doesn't exist using fs.mkdirSync() with the recursive flag."
+    },
+    {
+      "file": "index.js",
+      "line": 55,
+      "title": "Save Note Tool Handler",
+      "description": "The handleSaveNote() function:\n1. Ensures the notes directory exists\n2. Slugifies the title to create a filename\n3. Writes the content to a .md file\n4. Returns a success message\n\nThis is called when Claude Code uses the 'save_note' tool."
+    },
+    {
+      "file": "index.js",
+      "line": 72,
+      "title": "List Notes Tool Handler",
+      "description": "The handleListNotes() function:\n1. Reads all .md files from the notes directory\n2. For each file, extracts the modification date\n3. Converts filename back to readable title\n4. Returns a formatted list of all available notes\n\nThis enables Claude to see what notes you have saved."
+    },
+    {
+      "file": "index.js",
+      "line": 105,
+      "title": "Read Note Tool Handler",
+      "description": "The handleReadNote() function:\n1. Slugifies the requested title\n2. Checks if the file exists\n3. Reads and returns the file content\n4. Returns an error message if the note isn't found\n\nThis allows Claude to retrieve the full content of any saved note."
+    },
+    {
+      "file": "index.js",
+      "line": 128,
+      "title": "Tool Call Router",
+      "description": "The processToolCall() function acts as a router that:\n- Receives the tool name and arguments from Claude Code\n- Calls the appropriate handler (save_note, list_notes, or read_note)\n- Returns the result back to Claude\n\nThis is the central dispatcher for all tool operations."
+    },
+    {
+      "file": "index.js",
+      "line": 147,
+      "title": "Server Initialization",
+      "description": "The main() function creates the MCP server with:\n- Name: 'dev-notes-server'\n- Version: '1.0.0'\n\nThis server object will handle all communication with Claude Code."
+    },
+    {
+      "file": "index.js",
+      "line": 155,
+      "title": "Register Tools with Server",
+      "description": "The server.setRequestHandler() for ListToolsRequestSchema tells Claude Code what tools are available:\n\n1. **save_note** - Takes title and content, saves as markdown\n2. **list_notes** - Takes no parameters, returns list of notes\n3. **read_note** - Takes title, returns file contents\n\nEach tool has a description and inputSchema that defines its parameters."
+    },
+    {
+      "file": "index.js",
+      "line": 204,
+      "title": "Handle Tool Calls from Claude",
+      "description": "The server.setRequestHandler() for CallToolRequestSchema:\n- Receives tool call requests from Claude Code\n- Extracts the tool name and arguments\n- Calls processToolCall() to execute the requested tool\n- Returns the result wrapped in a content array\n\nThis is where the actual tool execution happens."
+    },
+    {
+      "file": "index.js",
+      "line": 214,
+      "title": "Stdio Transport Connection",
+      "description": "The StdioServerTransport connects the server to Claude Code's stdio interface:\n- Reads tool requests from stdin\n- Writes responses to stdout\n- Enables bidirectional communication\n\nThis is the communication backbone of the MCP server."
+    },
+    {
+      "file": "index.js",
+      "line": 217,
+      "title": "Start the Server",
+      "description": "The server.connect() method starts listening for requests from Claude Code. Once connected, the server will:\n- Wait for tool call requests\n- Process them using the registered handlers\n- Send responses back to Claude\n\nThe server now runs continuously until terminated."
+    },
+    {
+      "file": "index.js",
+      "line": 224,
+      "title": "Error Handling and Startup",
+      "description": "The server is wrapped in error handling:\n- If any errors occur during initialization or execution, they're caught\n- Errors are logged to stderr (so they don't interfere with stdout communication)\n- The process exits with code 1 if a fatal error occurs\n\nThis ensures robust operation and debugging capability."
+    }
+  ]
+}

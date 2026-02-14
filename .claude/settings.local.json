@@ -1,0 +1,6 @@
+{
+  "enabledMcpjsonServers": [
+    "dev-notes-server"
+  ],
+  "enableAllProjectMcpServers": true
+}

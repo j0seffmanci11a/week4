@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "dev-notes-server": {
+      "command": "node",
+      "args": ["index.js"],
+      "env": {}
+    }
+  }
+}
